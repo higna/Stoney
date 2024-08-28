@@ -4,19 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barcode Generator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function addTextFields() {
+            const container = document.getElementById('text-fields');
+            const numberOfBarcodes = document.getElementById('number_of_barcodes').value;
+
+            container.innerHTML = ''; // Clear previous fields
+
+            for (let i = 0; i < numberOfBarcodes; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = 'texts';
+                input.placeholder = `Enter text for barcode ${i + 1}`;
+                input.required = true;
+                container.appendChild(input);
+                container.appendChild(document.createElement('br'));
+            }
+        }
+
+        function printBarcodes() {
+            window.print();
+        }
+
+        function downloadBarcodes() {
+            const barcodes = document.querySelectorAll('.barcode-item img');
+            barcodes.forEach((barcode, index) => {
+                const link = document.createElement('a');
+                link.href = barcode.src;
+                link.download = `barcode_${index + 1}.png`;
+                link.click();
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Barcode Generator</h1>
-        <form action="/" method="post">
-            <label for="barcodeText">Enter text for barcode:</label>
-            <input type="text" id="barcodeText" name="barcodeText" required>
-            <button type="submit">Generate Barcode</button>
+        
+        <form method="POST">
+            <label for="number_of_barcodes">Enter number of barcodes:</label>
+            <input type="number" id="number_of_barcodes" name="number_of_barcodes" min="1" required onchange="addTextFields()">
+            <br><br>
+            <div id="text-fields"></div>
+            <br>
+            <button type="submit">Generate Barcodes</button>
         </form>
-        {% if barcode_url %}
-        <h2>Generated Barcode:</h2>
-        <img src="{{ barcode_url }}" alt="Barcode">
+
+        {% if barcodes %}
+            <h2>Generated Barcodes</h2>
+            <div class="barcode-container">
+                {% for text, barcode in barcodes %}
+                    <div class="barcode-item">
+                        <h3>{{ text }}</h3>
+                        <img src="data:image/png;base64,{{ barcode }}" alt="Barcode for {{ text }}">
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <button onclick="printBarcodes()">Print Barcodes</button>
+            <button onclick="downloadBarcodes()">Download Barcodes</button>
         {% endif %}
     </div>
 </body>
