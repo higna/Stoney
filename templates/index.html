@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Barcode Generator</h1>
+        <form action="/" method="post">
+            <label for="barcodeText">Enter text for barcode:</label>
+            <input type="text" id="barcodeText" name="barcodeText" required>
+            <button type="submit">Generate Barcode</button>
+        </form>
+        {% if barcode_url %}
+        <h2>Generated Barcode:</h2>
+        <img src="{{ barcode_url }}" alt="Barcode">
+        {% endif %}
+    </div>
+</body>
+</html>
